@@ -1,0 +1,192 @@
+/* Minimal & Clean Styling for Movie Reservation System */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  background-color: #0b0f19;
+  color: #f1f5f9;
+  line-height: 1.5;
+  min-height: 100vh;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+/* Layout Container */
+.container {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 1.5rem 1.25rem;
+}
+
+/* Navigation */
+.navbar {
+  background-color: #111827;
+  border-bottom: 1px solid #1f2937;
+  padding: 0.85rem 1.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.nav-brand {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #ef4444;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+}
+
+/* Cards */
+.card {
+  background-color: #131b2e;
+  border: 1px solid #1e293b;
+  border-radius: 8px;
+  padding: 1.25rem;
+  margin-bottom: 1rem;
+}
+
+/* Buttons */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  padding: 0.55rem 1.1rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  border-radius: 6px;
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: opacity 0.2s;
+}
+
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btn:hover:not(:disabled) {
+  opacity: 0.9;
+}
+
+.btn-primary {
+  background-color: #ef4444;
+  color: #ffffff;
+}
+
+.btn-success {
+  background-color: #10b981;
+  color: #ffffff;
+}
+
+.btn-danger {
+  background-color: #dc2626;
+  color: #ffffff;
+}
+
+.btn-secondary {
+  background-color: #1f2937;
+  color: #f1f5f9;
+  border-color: #374151;
+}
+
+/* Forms & Inputs */
+input, select {
+  width: 100%;
+  padding: 0.65rem 0.85rem;
+  background-color: #1e293b;
+  border: 1px solid #334155;
+  border-radius: 6px;
+  color: #f8fafc;
+  font-size: 0.95rem;
+  margin-bottom: 1rem;
+}
+
+input:focus {
+  outline: none;
+  border-color: #38bdf8;
+}
+
+/* Seat Buttons */
+.seat-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #334155;
+  cursor: pointer;
+  background-color: #1e293b;
+  color: #94a3b8;
+}
+
+.seat-btn.available,
+.seat-btn.available.regular {
+  background-color: #064e3b;
+  border-color: #059669;
+  color: #a7f3d0;
+}
+
+.seat-btn.available.premium {
+  background-color: #4c1d95;
+  border-color: #7c3aed;
+  color: #ddd6fe;
+}
+
+.seat-btn.available.vip {
+  background-color: #78350f;
+  border-color: #d97706;
+  color: #fef08a;
+}
+
+.seat-btn.selected {
+  background-color: #2563eb;
+  border-color: #60a5fa;
+  color: #ffffff;
+  transform: scale(1.05);
+}
+
+.seat-btn.booked {
+  background-color: #334155;
+  border-color: #475569;
+  color: #64748b;
+  cursor: not-allowed;
+}
+
+/* Alerts */
+.alert-error {
+  background-color: rgba(239, 68, 68, 0.15);
+  border: 1px solid #ef4444;
+  color: #fca5a5;
+  padding: 0.75rem 1rem;
+  border-radius: 6px;
+  margin-bottom: 1rem;
+  font-size: 0.9rem;
+}
+
+.alert-success {
+  background-color: rgba(16, 185, 129, 0.15);
+  border: 1px solid #10b981;
+  color: #6ee7b7;
+  padding: 0.75rem 1rem;
+  border-radius: 6px;
+  margin-bottom: 1rem;
+  font-size: 0.9rem;
+}
