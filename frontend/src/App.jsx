@@ -8,6 +8,7 @@ import SeatSelectionPage from "./pages/SeatSelectionPage";
 import CheckoutPage from "./pages/CheckoutPage";
 import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
+import MyBookingsPage from "./pages/MyBookingsPage";
 
 export default function App() {
   return (
@@ -20,6 +21,7 @@ export default function App() {
             <Route path="/movies/:movieId" element={<MovieDetailsPage />} />
             <Route path="/shows/:showId/seats" element={<SeatSelectionPage />} />
             <Route path="/checkout/:bookingId" element={<CheckoutPage />} />
+            <Route path="/my-bookings" element={<MyBookingsPage />} />
             <Route path="/login" element={<LoginPage />} />
             <Route path="/register" element={<RegisterPage />} />
           </Routes>

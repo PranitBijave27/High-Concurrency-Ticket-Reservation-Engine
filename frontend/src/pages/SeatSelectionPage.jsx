@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useParams, useNavigate, useLocation } from "react-router-dom";
 import API from "../api/client";
 import { useAuth } from "../context/AuthContext";
+import GeminiSeatRecommender from "../components/GeminiSeatRecommender";
 
 export default function SeatSelectionPage() {
   const { showId } = useParams();
@@ -131,6 +132,12 @@ export default function SeatSelectionPage() {
           {show.screenId?.theaterId?.name} ({show.screenId?.name}) • Base Price: ₹{show.basePrice}
         </p>
       </div>
+
+      {/* Piece 5: Gemini AI Smart Seat Recommender */}
+      <GeminiSeatRecommender
+        showId={showId}
+        onSelectRecommendedSeats={(recommendedIds) => setSelectedSeatIds(recommendedIds)}
+      />
 
       {error && <div className="alert-error">{error}</div>}
 

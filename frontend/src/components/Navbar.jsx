@@ -24,6 +24,9 @@ export default function Navbar() {
 
         {isAuthenticated ? (
           <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
+            <Link to="/my-bookings" style={{ color: "#cbd5e1", fontWeight: "500", fontSize: "0.9rem" }}>
+              My Bookings
+            </Link>
             <span style={{ fontSize: "0.9rem", color: "#94a3b8" }}>
               Hi, <strong>{user?.name}</strong>
             </span>
