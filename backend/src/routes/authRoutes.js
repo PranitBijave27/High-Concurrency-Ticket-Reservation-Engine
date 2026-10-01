@@ -67,5 +67,7 @@ router.post("/register", validateRegister ,authController.register);
  *         description: Invalid credentials
  */
 router.post("/login",validateLogin , authController.login);
+router.post("/refresh", authController.refreshToken);
+router.post("/logout", authController.logout);
 
 module.exports = router;

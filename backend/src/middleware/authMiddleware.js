@@ -19,7 +19,8 @@ const authMiddleware = async (req,res,next)=>{
     next();
 
   }catch(err){
-    res.status(401).json({error:"Invalid token"});
+    const message = err.name === "TokenExpiredError" ? "Token expired" : "Invalid token";
+    res.status(401).json({ success: false, message, error: message });
   }
 };
 

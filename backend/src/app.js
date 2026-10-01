@@ -9,12 +9,35 @@ const screenRoutes = require("./routes/screenRoutes");
 const showRoutes = require("./routes/showRoutes");
 const bookingRoutes = require("./routes/bookingRoutes");
 const startAutomation = require("./utils/automation");
+const cookieParser = require("cookie-parser");
 const swaggerUi=require("swagger-ui-express");
 const swaggerSpec=require("./docs/swagger");
 
 const app = express();
 
-app.use(cors());
+const allowedOrigins = [
+	"http://localhost:5173",
+	"http://localhost:5174",
+	process.env.CLIENT_URL
+].filter(Boolean);
+
+// NOTE / TODO (CORS Lockdown):
+// Currently in dev, the fallback branch allows all origins (callback(null, true)) to prevent DX friction.
+// Before production / during Auth frontend integration, change the else branch to:
+//   callback(new Error(`CORS blocked: Origin ${origin} not allowed`), false);
+// Full architectural rationale documented in docs/interview-notes-secure-auth.md (Section 6).
+app.use(cors({
+	origin: (origin, callback) => {
+		if (!origin || allowedOrigins.includes(origin) || origin.startsWith("http://localhost")) {
+			callback(null, true);
+		} else {
+			callback(null, true);
+		}
+	},
+	credentials: true
+}));
+
+app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
