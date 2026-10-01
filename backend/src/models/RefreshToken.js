@@ -8,7 +8,7 @@ const refreshTokenSchema = new mongoose.Schema(
       required: true,
       index: true,
     },
-    token: {
+    tokenHash: {
       type: String,
       required: true,
       unique: true,
@@ -23,6 +23,6 @@ const refreshTokenSchema = new mongoose.Schema(
 
 // Automatic TTL cleanup when refresh token expires
 refreshTokenSchema.index({ expiresAt: 1 }, { expireAfterSeconds: 0 });
-refreshTokenSchema.index({ userId: 1, token: 1 });
+refreshTokenSchema.index({ userId: 1, tokenHash: 1 });
 
 module.exports = mongoose.model("RefreshToken", refreshTokenSchema);

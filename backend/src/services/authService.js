@@ -4,6 +4,7 @@ const {
   generateAccessToken,
   generateRefreshToken,
   verifyRefreshToken,
+  hashToken,
   REFRESH_TOKEN_EXPIRY_MS,
 } = require("../utils/generateToken");
 const AppError = require("../utils/AppError");
@@ -18,11 +19,11 @@ exports.registerUser = async (data) => {
   const accessToken = generateAccessToken(user._id);
   const refreshToken = generateRefreshToken(user._id);
 
-  // Store refresh token in database for rotation & revocation tracking
+  // Store refresh token hash in database for rotation & revocation tracking
   const expiresAt = new Date(Date.now() + REFRESH_TOKEN_EXPIRY_MS);
   await RefreshToken.create({
     userId: user._id,
-    token: refreshToken,
+    tokenHash: hashToken(refreshToken),
     expiresAt,
   });
 
@@ -48,11 +49,11 @@ exports.loginUser = async (email, password) => {
   const accessToken = generateAccessToken(user._id);
   const refreshToken = generateRefreshToken(user._id);
 
-  // Persist refresh token in MongoDB
+  // Persist refresh token hash in MongoDB
   const expiresAt = new Date(Date.now() + REFRESH_TOKEN_EXPIRY_MS);
   await RefreshToken.create({
     userId: user._id,
-    token: refreshToken,
+    tokenHash: hashToken(refreshToken),
     expiresAt,
   });
 
@@ -79,8 +80,9 @@ exports.refreshSession = async (incomingRefreshToken) => {
     throw new AppError("Invalid or expired refresh token signature", 401);
   }
 
-  // Verify that the refresh token exists in DB (not revoked/logged out)
-  const savedRecord = await RefreshToken.findOne({ token: incomingRefreshToken });
+  // Verify that the refresh token exists in DB by its SHA-256 hash (not revoked/logged out)
+  const tokenHash = hashToken(incomingRefreshToken);
+  const savedRecord = await RefreshToken.findOne({ tokenHash });
   if (!savedRecord) {
     throw new AppError("Refresh token has been revoked or invalidated", 401);
   }
@@ -100,7 +102,7 @@ exports.refreshSession = async (incomingRefreshToken) => {
   const expiresAt = new Date(Date.now() + REFRESH_TOKEN_EXPIRY_MS);
   await RefreshToken.create({
     userId: user._id,
-    token: newRefreshToken,
+    tokenHash: hashToken(newRefreshToken),
     expiresAt,
   });
 
@@ -117,7 +119,8 @@ exports.refreshSession = async (incomingRefreshToken) => {
 
 exports.logoutUser = async (incomingRefreshToken) => {
   if (incomingRefreshToken) {
-    await RefreshToken.deleteOne({ token: incomingRefreshToken });
+    const tokenHash = hashToken(incomingRefreshToken);
+    await RefreshToken.deleteOne({ tokenHash });
   }
   return { success: true };
 };

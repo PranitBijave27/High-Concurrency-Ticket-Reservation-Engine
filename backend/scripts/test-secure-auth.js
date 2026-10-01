@@ -71,10 +71,42 @@ async function runAuthSecurityTest() {
   if (!loginRes.ok) throw new Error(`Login failed: ${loginData.message}`);
 
   const loginCookieHeader = loginRes.headers.get("set-cookie") || "";
+  // Extract latest refresh token from cookie
   const loginCookieMatch = loginCookieHeader.match(/refreshToken=([^;]+)/);
   currentCookie = loginCookieMatch ? loginCookieMatch[1] : currentCookie;
   currentAccessToken = loginData.data.accessToken;
   console.log("✓ Login successful. Fresh Access Token and HTTP-Only Cookie issued.");
+
+  // -------------------------------------------------------------
+  // TEST 3B: Database Security Audit (Verify SHA-256 Hashing at Rest)
+  // -------------------------------------------------------------
+  console.log("\n3b. Verifying Token Hashing at Rest in MongoDB...");
+  const crypto = require("crypto");
+  const mongoose = require("mongoose");
+  require("dotenv").config({ path: require("path").resolve(__dirname, "../.env") });
+  
+  if (mongoose.connection.readyState === 0) {
+    await mongoose.connect(process.env.MONGO_URI);
+  }
+
+  const expectedHash = crypto.createHash("sha256").update(currentCookie).digest("hex");
+  const storedDoc = await mongoose.connection.collection("refreshtokens").findOne({
+    tokenHash: expectedHash,
+  });
+
+  if (!storedDoc) {
+    throw new Error("FAIL: Refresh token hash was not found in MongoDB!");
+  }
+  if (storedDoc.token) {
+    throw new Error("FAIL: Raw unhashed token was found in MongoDB! Must store only tokenHash.");
+  }
+  if (!storedDoc.tokenHash || storedDoc.tokenHash.length !== 64) {
+    throw new Error(`FAIL: tokenHash is not a valid 64-character SHA-256 string! Got: ${storedDoc.tokenHash}`);
+  }
+  console.log("✓ Database Verification PASSED:");
+  console.log("   - Raw JWT Cookie:          ", currentCookie.slice(0, 30) + "...");
+  console.log("   - Stored in MongoDB (SHA256):", storedDoc.tokenHash);
+  console.log("   - Raw Plaintext in DB:        NONE (Undamaged by DB leaks/dumps)");
 
   // -------------------------------------------------------------
   // TEST 4: Token Rotation (/api/auth/refresh)
@@ -157,8 +189,12 @@ async function runAuthSecurityTest() {
     throw new Error("FAIL: Token was still valid after logout!");
   }
 
+  if (mongoose.connection.readyState !== 0) {
+    await mongoose.disconnect();
+  }
+
   console.log("\n==================================================================");
-  console.log("🎉 ALL AUTH SECURITY & TOKEN ROTATION TESTS PASSED (6/6)!");
+  console.log("🎉 ALL AUTH SECURITY, SHA-256 HASHING & ROTATION TESTS PASSED (7/7)!");
   console.log("==================================================================");
 }
 

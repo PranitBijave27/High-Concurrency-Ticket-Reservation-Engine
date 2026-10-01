@@ -31,9 +31,14 @@ const verifyRefreshToken = (token) => {
   return jwt.verify(token, getRefreshSecret());
 };
 
+const hashToken = (token) => {
+  return crypto.createHash("sha256").update(token).digest("hex");
+};
+
 // Default export generates access token for backwards compatibility
 module.exports = generateAccessToken;
 module.exports.generateAccessToken = generateAccessToken;
 module.exports.generateRefreshToken = generateRefreshToken;
 module.exports.verifyRefreshToken = verifyRefreshToken;
+module.exports.hashToken = hashToken;
 module.exports.REFRESH_TOKEN_EXPIRY_MS = REFRESH_TOKEN_EXPIRY_MS;
