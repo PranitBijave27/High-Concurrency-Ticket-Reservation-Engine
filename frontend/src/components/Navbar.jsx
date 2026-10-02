@@ -21,6 +21,9 @@ export default function Navbar() {
         <Link to="/" style={{ color: "#cbd5e1", fontWeight: "500" }}>
           Movies
         </Link>
+        <Link to="/theaters" style={{ color: "#cbd5e1", fontWeight: "500" }}>
+          Theaters
+        </Link>
 
         {isAuthenticated ? (
           <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
