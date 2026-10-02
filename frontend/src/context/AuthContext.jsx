@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from "react";
-import API from "../api/client";
+import API, { setAccessToken } from "../api/client";
 
 const AuthContext = createContext(null);
 
@@ -8,54 +8,90 @@ export const AuthProvider = ({ children }) => {
   const [token, setToken] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // Restore session from localStorage on initial app load
+  // Silent session rehydration from HTTP-Only cookie on initial app mount
   useEffect(() => {
-    try {
-      const storedToken = localStorage.getItem("token");
-      const storedUser = localStorage.getItem("user");
+    let isMounted = true;
 
-      if (storedToken && storedUser) {
-        setToken(storedToken);
-        setUser(JSON.parse(storedUser));
+    const rehydrateSession = async () => {
+      try {
+        const res = await API.post("/auth/refresh");
+        const { accessToken, user: userData } = res.data.data;
+        if (isMounted) {
+          setAccessToken(accessToken);
+          setToken(accessToken);
+          setUser(userData);
+        }
+      } catch (err) {
+        // No active session or refresh cookie expired - remain guest
+        if (isMounted) {
+          setAccessToken(null);
+          setToken(null);
+          setUser(null);
+        }
+      } finally {
+        if (isMounted) {
+          setLoading(false);
+        }
       }
-    } catch (err) {
-      console.error("Failed to restore session:", err);
-      localStorage.removeItem("token");
-      localStorage.removeItem("user");
-    } finally {
-      setLoading(false);
-    }
+    };
+
+    rehydrateSession();
+
+    // Listen for background session updates or expirations dispatched from client.js
+    const handleAuthRefreshed = (e) => {
+      if (isMounted && e.detail) {
+        setToken(e.detail.accessToken);
+        if (e.detail.user) setUser(e.detail.user);
+      }
+    };
+
+    const handleAuthExpired = () => {
+      if (isMounted) {
+        setToken(null);
+        setUser(null);
+      }
+    };
+
+    window.addEventListener("auth:refreshed", handleAuthRefreshed);
+    window.addEventListener("auth:expired", handleAuthExpired);
+
+    return () => {
+      isMounted = false;
+      window.removeEventListener("auth:refreshed", handleAuthRefreshed);
+      window.removeEventListener("auth:expired", handleAuthExpired);
+    };
   }, []);
 
   const login = async (email, password) => {
     const res = await API.post("/auth/login", { email, password });
-    const { token: receivedToken, user: receivedUser } = res.data.data;
+    const { accessToken, user: receivedUser } = res.data.data;
 
-    localStorage.setItem("token", receivedToken);
-    localStorage.setItem("user", JSON.stringify(receivedUser));
-
-    setToken(receivedToken);
+    setAccessToken(accessToken);
+    setToken(accessToken);
     setUser(receivedUser);
     return receivedUser;
   };
 
   const register = async (name, email, password) => {
     const res = await API.post("/auth/register", { name, email, password });
-    const { token: receivedToken, user: receivedUser } = res.data.data;
+    const { accessToken, user: receivedUser } = res.data.data;
 
-    localStorage.setItem("token", receivedToken);
-    localStorage.setItem("user", JSON.stringify(receivedUser));
-
-    setToken(receivedToken);
+    setAccessToken(accessToken);
+    setToken(accessToken);
     setUser(receivedUser);
     return receivedUser;
   };
 
-  const logout = () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("user");
-    setToken(null);
-    setUser(null);
+  const logout = async () => {
+    try {
+      await API.post("/auth/logout");
+    } catch (err) {
+      console.warn("Server logout notification failed:", err.message);
+    } finally {
+      setAccessToken(null);
+      setToken(null);
+      setUser(null);
+    }
   };
 
   return (

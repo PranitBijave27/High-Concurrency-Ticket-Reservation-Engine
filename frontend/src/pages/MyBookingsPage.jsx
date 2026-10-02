@@ -6,7 +6,7 @@ import { useAuth } from "../context/AuthContext";
 import "./MyBookingsPage.css";
 
 export default function MyBookingsPage() {
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, loading: authLoading } = useAuth();
   const navigate = useNavigate();
 
   const [bookings, setBookings] = useState([]);
@@ -17,12 +17,13 @@ export default function MyBookingsPage() {
   const [successMsg, setSuccessMsg] = useState("");
 
   useEffect(() => {
+    if (authLoading) return; // Wait until session rehydration finishes
     if (!isAuthenticated) {
       navigate("/login", { state: { from: { pathname: "/my-bookings" } } });
       return;
     }
     fetchMyBookings();
-  }, [isAuthenticated]);
+  }, [isAuthenticated, authLoading]);
 
   const fetchMyBookings = async () => {
     try {

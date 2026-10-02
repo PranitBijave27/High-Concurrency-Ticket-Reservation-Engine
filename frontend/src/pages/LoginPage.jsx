@@ -38,11 +38,6 @@ export default function LoginPage() {
     }
   };
 
-  const fillDemo = () => {
-    setEmail("alice@example.com");
-    setPassword("password123");
-  };
-
   return (
     <div className="container" style={{ maxWidth: "420px", marginTop: "2rem" }}>
       <div className="card">
@@ -85,15 +80,6 @@ export default function LoginPage() {
             {loading ? "Signing in..." : "Login"}
           </button>
         </form>
-
-        <button
-          type="button"
-          onClick={fillDemo}
-          className="btn btn-secondary"
-          style={{ width: "100%", marginTop: "0.75rem", fontSize: "0.85rem" }}
-        >
-          Use Demo Account (Alice)
-        </button>
 
         <p style={{ textAlign: "center", marginTop: "1.25rem", fontSize: "0.85rem", color: "#94a3b8" }}>
           Don't have an account?{" "}
