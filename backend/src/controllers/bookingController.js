@@ -14,15 +14,6 @@ exports.createBooking = wrapAsync(async (req,res,next)=>{
   });
 });
 
-exports.getBookedSeats = wrapAsync(async (req,res)=>{
-    const seats = await bookingService.getBookedSeats(req.params.showId);
-    res.status(200).json({
-        success: true,
-        message: "Booked seats fetched successfully",
-        data: seats
-  });
-});
-
 exports.getSeatAvailabilty=wrapAsync(async(req,res)=>{
     const seats=await bookingService.getSeatAvailabilty(req.params.showId);
     res.status(200).json({

@@ -6,7 +6,6 @@ const { validateBooking } = require("../validators/bookingValidator");
 
 router.post("/",authMiddleware,validateBooking, bookingController.createBooking);
 
-router.get("/show/:showId/seats",bookingController.getBookedSeats);
 router.get("/show/:showId/availability",bookingController.getSeatAvailabilty);
 
 router.get("/me",authMiddleware, bookingController.getMyBookings);

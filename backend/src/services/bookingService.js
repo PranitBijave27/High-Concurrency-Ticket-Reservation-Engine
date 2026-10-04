@@ -108,11 +108,6 @@ exports.createBooking = async ({ userId, showId, seatIds }) => {
     });
 };
 
-exports.getBookedSeats = async (showId) => {
-    const showSeats = await ShowSeat.find({ showId }).select("seatId -_id");
-    return showSeats.map((s) => s.seatId);
-};
-
 exports.getSeatAvailabilty = async (showId) => {
     const show = await Show.findById(showId);
     if (!show) {
