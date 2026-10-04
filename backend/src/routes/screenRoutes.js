@@ -5,6 +5,8 @@ const authMiddleware = require("../middleware/authMiddleware");
 const adminMiddleware = require("../middleware/adminMiddleware");
 const { validateScreen } = require("../validators/screenValidator");
 
+router.get("/", screenController.getScreens);
+
 router.post("/",
     authMiddleware,
     adminMiddleware, 

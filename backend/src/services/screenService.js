@@ -53,3 +53,7 @@ exports.createScreen = async (data) => {
 		return screen;
 	});
 };
+
+exports.getScreens = async () => {
+	return await Screen.find().populate("theaterId", "name city address");
+};
