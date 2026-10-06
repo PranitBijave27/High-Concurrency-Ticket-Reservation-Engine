@@ -87,12 +87,22 @@ app.get("/", (req, res) => {
 	 });
 });
 
+// Primary API Endpoints
 app.use("/api/auth", authRoutes);
 app.use("/api/movies", movieRoutes);
 app.use("/api/theaters", theaterRoutes);
 app.use("/api/screens", screenRoutes);
 app.use("/api/shows", showRoutes);
 app.use("/api/bookings", bookingRoutes);
+
+// Fault-tolerant aliases in case client omits '/api' prefix
+app.use("/auth", authRoutes);
+app.use("/movies", movieRoutes);
+app.use("/theaters", theaterRoutes);
+app.use("/screens", screenRoutes);
+app.use("/shows", showRoutes);
+app.use("/bookings", bookingRoutes);
+
 app.get("/health", (req, res) => {
 	res.status(200).send("OK");
 });

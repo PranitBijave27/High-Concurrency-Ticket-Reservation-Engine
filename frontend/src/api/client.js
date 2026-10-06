@@ -9,8 +9,12 @@ export const setAccessToken = (token) => {
 
 export const getAccessToken = () => inMemoryAccessToken;
 
+const rawBaseUrl = import.meta.env.VITE_API_URL || "http://localhost:3000/api";
+const trimmedBaseUrl = rawBaseUrl.replace(/\/+$/, "");
+const apiBaseUrl = trimmedBaseUrl.endsWith("/api") ? trimmedBaseUrl : `${trimmedBaseUrl}/api`;
+
 const API = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || "http://localhost:3000/api",
+  baseURL: apiBaseUrl,
   withCredentials: true, // Send and receive HTTP-Only cookies cross-origin
   headers: {
     "Content-Type": "application/json",
