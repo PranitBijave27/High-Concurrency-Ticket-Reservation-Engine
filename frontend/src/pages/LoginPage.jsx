@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 
@@ -8,12 +8,23 @@ export default function LoginPage() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const { login } = useAuth();
+  const { user, isAuthenticated, login } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
 
   const from = location.state?.from || "/";
   const selectedSeatIds = location.state?.selectedSeatIds;
+
+  // If already logged in, redirect immediately (admins to /admin, others to home/from)
+  useEffect(() => {
+    if (isAuthenticated) {
+      if (user?.role === "admin") {
+        navigate("/admin", { replace: true });
+      } else if (!location.state?.from) {
+        navigate("/", { replace: true });
+      }
+    }
+  }, [isAuthenticated, user]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -21,8 +32,15 @@ export default function LoginPage() {
     setLoading(true);
 
     try {
-      await login(email, password);
-      // If user came from selecting seats, navigate back preserving seats
+      const loggedUser = await login(email, password);
+
+      // Requirement: Admin automatically routes to /admin!
+      if (loggedUser?.role === "admin") {
+        navigate("/admin", { replace: true });
+        return;
+      }
+
+      // If customer came from selecting seats, navigate back preserving seats
       if (location.state?.from) {
         navigate(location.state.from.pathname, {
           state: { selectedSeatIds },

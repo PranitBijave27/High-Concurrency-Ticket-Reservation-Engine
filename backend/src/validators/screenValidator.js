@@ -15,11 +15,10 @@ const screenSchema=Joi.object({
     theaterId: Joi.string()
     .hex()
     .length(24)
-    .required()
+    .optional()
     .messages({
       "string.hex": "Invalid theater id",
-      "string.length": "Invalid theater id",
-      "any.required": "Theater id is required"
+      "string.length": "Invalid theater id"
     }),
 
     rows: Joi.array()

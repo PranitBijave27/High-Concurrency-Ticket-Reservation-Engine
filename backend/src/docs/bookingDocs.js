@@ -42,23 +42,6 @@
  *         description: Unauthorized
  */
 
-/**
- * @swagger
- * /api/bookings/show/{showId}/seats:
- *   get:
- *     summary: Get booked seats for a show
- *     tags: [Bookings]
- *     parameters:
- *       - in: path
- *         name: showId
- *         required: true
- *         schema:
- *           type: string
- *         description: Show id
- *     responses:
- *       200:
- *         description: List of booked seat ids
- */
 
 /**
  * @swagger

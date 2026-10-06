@@ -72,7 +72,7 @@ export default function MovieDetailsPage() {
               <div key={show._id} className="card" style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "1rem" }}>
                 <div>
                   <h3 style={{ fontSize: "1.05rem" }}>
-                    {theater?.name || "Cinema Hall"} — {show.screenId?.name}
+                    {show.screenId?.name || "Auditorium"}
                   </h3>
                   <p style={{ color: "#94a3b8", fontSize: "0.85rem" }}>
                     {formattedDate} at <strong style={{ color: "#38bdf8" }}>{formattedTime}</strong>

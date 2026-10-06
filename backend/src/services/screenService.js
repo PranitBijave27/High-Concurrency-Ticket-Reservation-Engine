@@ -5,13 +5,20 @@ const AppError = require("../utils/AppError");
 const { withTransaction } = require("../utils/transactionHelper");
 
 exports.createScreen = async (data) => {
-	const { theaterId, name, rows, seatsPerRow, layoutType } = data;
+	let { theaterId, name, rows, seatsPerRow, layoutType } = data;
 
-	// verify theater exists
-	const theater = await Theater.findById(theaterId);
-	if (!theater) throw new AppError("Theater not found", 404);
+	let targetTheaterId = theaterId;
+	if (!targetTheaterId) {
+		const defaultTheater = await Theater.findOne({ status: "active" });
+		if (!defaultTheater) throw new AppError("No active theater found. Please create or seed a theater first.", 404);
+		targetTheaterId = defaultTheater._id;
+	} else {
+		// verify theater exists
+		const theater = await Theater.findById(targetTheaterId);
+		if (!theater) throw new AppError("Theater not found", 404);
+	}
 
-	const existing = await Screen.findOne({ theaterId, name });
+	const existing = await Screen.findOne({ theaterId: targetTheaterId, name });
 	if (existing) throw new AppError("Screen already exists in this theater", 409);
 
 	// total seats
@@ -21,7 +28,7 @@ exports.createScreen = async (data) => {
 		const queryOptions = session ? { session } : {};
 
 		const screen = new Screen({
-			theaterId,
+			theaterId: targetTheaterId,
 			name,
 			totalSeats,
 			layoutType,

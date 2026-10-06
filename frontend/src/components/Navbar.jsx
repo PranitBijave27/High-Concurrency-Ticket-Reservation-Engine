@@ -21,12 +21,28 @@ export default function Navbar() {
         <Link to="/" style={{ color: "#cbd5e1", fontWeight: "500" }}>
           Movies
         </Link>
-        <Link to="/theaters" style={{ color: "#cbd5e1", fontWeight: "500" }}>
-          Theaters
-        </Link>
 
         {isAuthenticated ? (
           <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
+            {user?.role === "admin" && (
+              <Link
+                to="/admin"
+                style={{
+                  color: "#f59e0b",
+                  fontWeight: "600",
+                  fontSize: "0.85rem",
+                  background: "#451a03",
+                  border: "1px solid #f59e0b",
+                  padding: "0.3rem 0.6rem",
+                  borderRadius: "4px",
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "0.35rem",
+                }}
+              >
+                ⚙️ Admin
+              </Link>
+            )}
             <Link to="/my-bookings" style={{ color: "#cbd5e1", fontWeight: "500", fontSize: "0.9rem" }}>
               My Bookings
             </Link>

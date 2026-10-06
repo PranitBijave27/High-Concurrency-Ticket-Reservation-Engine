@@ -9,7 +9,8 @@ import CheckoutPage from "./pages/CheckoutPage";
 import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
 import MyBookingsPage from "./pages/MyBookingsPage";
-import TheatersPage from "./pages/TheatersPage";
+import AdminPage from "./pages/AdminPage";
+import AdminRoute from "./components/AdminRoute";
 
 export default function App() {
   return (
@@ -19,7 +20,14 @@ export default function App() {
           <Navbar />
           <Routes>
             <Route path="/" element={<MoviesPage />} />
-            <Route path="/theaters" element={<TheatersPage />} />
+            <Route
+              path="/admin"
+              element={
+                <AdminRoute>
+                  <AdminPage />
+                </AdminRoute>
+              }
+            />
             <Route path="/movies/:movieId" element={<MovieDetailsPage />} />
             <Route path="/shows/:showId/seats" element={<SeatSelectionPage />} />
             <Route path="/checkout/:bookingId" element={<CheckoutPage />} />
