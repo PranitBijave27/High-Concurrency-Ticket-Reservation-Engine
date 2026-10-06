@@ -1,4 +1,4 @@
-# 🎬 Movie Reservation & High-Concurrency Ticketing Engine
+# 🎬 Movie Reservation & High-Concurrency Ticket-Reservation-Engine
 
 A full-stack movie reservation platform built with Node.js, Express, MongoDB, and React. It solves the classic ticket-booking concurrency challenge: **guaranteeing zero double-bookings under burst traffic**, enforcing temporary seat holds, and providing an enterprise-grade dual-token authentication flow.
 
