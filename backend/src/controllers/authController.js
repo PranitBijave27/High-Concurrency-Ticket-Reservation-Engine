@@ -4,10 +4,15 @@ const wrapAsync = require("../utils/wrapAsync");
 const COOKIE_NAME = "refreshToken";
 
 // Security cookie options: httpOnly blocks XSS, sameSite blocks CSRF
+// For cross-site cloud deployment (e.g. Vercel frontend + Render backend), sameSite must be "none" with secure: true
+// In local development or single-domain setups, sameSite defaults to "strict"
+const isProduction = process.env.NODE_ENV === "production";
+const cookieSameSite = process.env.COOKIE_SAMESITE || (isProduction ? "none" : "strict");
+
 const getCookieOptions = () => ({
   httpOnly: true,
-  secure: process.env.NODE_ENV === "production",
-  sameSite: "strict",
+  secure: isProduction || cookieSameSite === "none",
+  sameSite: cookieSameSite,
   maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
   path: "/api/auth",
 });
@@ -17,12 +22,7 @@ const setRefreshCookie = (res, token) => {
 };
 
 const clearRefreshCookie = (res) => {
-  res.clearCookie(COOKIE_NAME, {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    sameSite: "strict",
-    path: "/api/auth",
-  });
+  res.clearCookie(COOKIE_NAME, getCookieOptions());
 };
 
 exports.register = wrapAsync(async (req, res, next) => {
